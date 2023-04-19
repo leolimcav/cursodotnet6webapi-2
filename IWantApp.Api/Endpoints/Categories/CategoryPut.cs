@@ -6,7 +6,7 @@ namespace IWantApp.Api.Endpoints.Categories;
 
 public sealed class CategoryPut
 {
-    public static string Template => "/categories/{id}";
+    public static string Template => "/categories/{id:guid}";
     public static string[] Methods => new string[] { HttpMethod.Put.ToString() };
     public static Delegate Handle => Action;
 
@@ -18,10 +18,12 @@ public sealed class CategoryPut
             return Results.NotFound();
         }
 
-        category.Name = categoryRequest.Name;
-        category.Active = categoryRequest.Active;
-        category.UpdatedAt = DateTime.UtcNow;
-        category.UpdatedBy = "Test";
+        category.UpdateInfo(categoryRequest.Name, categoryRequest.Active);
+
+        if(!category.IsValid)
+        {
+            return Results.ValidationProblem(category.Notifications.ConvertToProblemDetails());
+        }
 
         context.SaveChanges();
 

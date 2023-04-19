@@ -7,6 +7,7 @@ builder.Services.AddSqlServer<ApplicationDbContext>(builder.Configuration.GetCon
 
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
+builder.Services.AddHealthChecks();
 
 var app = builder.Build();
 
@@ -18,6 +19,7 @@ if (app.Environment.IsDevelopment())
 
 app.UseHttpsRedirection();
 
+app.MapHealthChecks("/healthcheck");
 app.MapMethods(CategoryGetAll.Template, CategoryGetAll.Methods, CategoryGetAll.Handle);
 app.MapMethods(CategoryGetById.Template, CategoryGetById.Methods, CategoryGetById.Handle);
 app.MapMethods(CategoryPost.Template, CategoryPost.Methods, CategoryPost.Handle);

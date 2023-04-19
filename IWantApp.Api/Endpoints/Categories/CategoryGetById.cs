@@ -6,7 +6,7 @@ namespace IWantApp.Api.Endpoints.Categories;
 
 public sealed class CategoryGetById
 {
-    public static string Template => "/categories/{id}";
+    public static string Template => "/categories/{id:guid}";
     public static string[] Methods => new string[] { HttpMethod.Get.ToString() };
     public static Delegate Handle => Action;
 

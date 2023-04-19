@@ -11,14 +11,12 @@ public sealed class CategoryPost
 
     public static IResult Action(CategoryRequest categoryRequest, ApplicationDbContext context) 
     {
-        var category = new Category
-        {
-            Name = categoryRequest.Name,
-            CreatedAt = DateTime.UtcNow,
-            UpdatedAt = DateTime.UtcNow,
-            CreatedBy = "Test",
-            UpdatedBy = "Test"
-        };
+        var category = new Category(categoryRequest.Name, "test", "test");
+
+        if(!category.IsValid)
+        { 
+            return Results.ValidationProblem(category.Notifications.ConvertToProblemDetails());
+        }
 
         context.Add<Category>(category);
         context.SaveChanges();
