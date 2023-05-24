@@ -1,5 +1,4 @@
-using Microsoft.AspNetCore.Identity;
-using Microsoft.EntityFrameworkCore;
+using IWantApp.Api.Infra.Data;
 
 namespace IWantApp.Api.Endpoints.Employees;
 
@@ -11,6 +10,12 @@ public sealed class EmployeeGetAll
 
     public static Delegate Handle => Action;
 
+    public static IResult Action(QueryAllUsersWithClaimName query, int page = 1, int rows = 10)
+    {
+        return Results.Ok(query.Execute(page, rows));
+    }
+
+    /*
     public static IResult Action(UserManager<IdentityUser> userManager, int page = 1, int rows = 10)
     {
         var users = userManager.Users
@@ -31,4 +36,5 @@ public sealed class EmployeeGetAll
 
         return Results.Ok(users);
     }
+    */
 }

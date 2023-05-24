@@ -3,12 +3,16 @@ using IWantApp.Api.Endpoints.Employees;
 using IWantApp.Api.Infra.Data;
 
 using Microsoft.AspNetCore.Identity;
+using Microsoft.Data.SqlClient;
 
 var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddSqlServer<ApplicationDbContext>(builder.Configuration.GetConnectionString("SqlServer"));
+builder.Services.AddSingleton<SqlConnection>(new SqlConnection(builder.Configuration.GetConnectionString("SqlServer")));
 builder.Services.AddIdentity<IdentityUser, IdentityRole>()
     .AddEntityFrameworkStores<ApplicationDbContext>();
+
+builder.Services.AddScoped<QueryAllUsersWithClaimName>();
 
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
