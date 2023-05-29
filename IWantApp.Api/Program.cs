@@ -12,7 +12,25 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.Data.SqlClient;
 using Microsoft.IdentityModel.Tokens;
 
+using Serilog;
+using Serilog.Events;
+using Serilog.Sinks.MSSqlServer;
+
 var builder = WebApplication.CreateBuilder(args);
+
+builder.Host.UseSerilog((context, configuration) =>
+{
+    configuration
+        .WriteTo.Console()
+        .WriteTo.MSSqlServer(
+                context.Configuration.GetConnectionString("SqlServer"),
+                sinkOptions: new MSSqlServerSinkOptions
+                {
+                   AutoCreateSqlTable = true,
+                   TableName = "LogAPI"
+                },
+                restrictedToMinimumLevel: LogEventLevel.Warning);
+});
 
 builder.Services.AddSqlServer<ApplicationDbContext>(builder.Configuration.GetConnectionString("SqlServer"));
 builder.Services.AddSingleton<SqlConnection>(new SqlConnection(builder.Configuration.GetConnectionString("SqlServer")));
