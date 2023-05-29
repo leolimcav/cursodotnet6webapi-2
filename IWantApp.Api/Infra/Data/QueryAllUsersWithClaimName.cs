@@ -15,9 +15,9 @@ public sealed class QueryAllUsersWithClaimName
        this._sqlConnection = sqlConnection;
    }
 
-   public IEnumerable<EmployeeResponse> Execute(int page, int rows)
+   public async Task<IEnumerable<EmployeeResponse>> Execute(int page, int rows)
    {
-        return this._sqlConnection.Query<EmployeeResponse>(@"
+        return await this._sqlConnection.QueryAsync<EmployeeResponse>(@"
                 SELECT ClaimValue as Name, Email
                 FROM AspNetUsers u
                 INNER JOIN AspNetUserClaims c
@@ -26,6 +26,6 @@ public sealed class QueryAllUsersWithClaimName
                 ORDER BY Name
                 OFFSET (@page - 1) * @rows ROWS 
                 FETCH NEXT @rows ROWS ONLY",
-                new { page, rows });
+                new { page, rows }).ConfigureAwait(false);
    }
 }

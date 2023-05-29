@@ -1,5 +1,6 @@
 using System.Security.Claims;
 
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 
 namespace IWantApp.Api.Endpoints.Employees;
@@ -12,33 +13,37 @@ public sealed class EmployeePost
 
     public static Delegate Handle => Action;
 
-    public static IResult Action(EmployeeRequest employeeRequest, UserManager<IdentityUser> userManager)
+    [Authorize(Policy = "EmployeePolicy")]
+    public static async Task<IResult> Action(EmployeeRequest employeeRequest, UserManager<IdentityUser> userManager, HttpContext http)
     {
-       var user =  new IdentityUser 
-       {
+       
+        var userId = http.User.Claims.First(c => c.Type.Equals(ClaimTypes.NameIdentifier)).Value;
+        var newUser =  new IdentityUser 
+        {
             UserName = employeeRequest.Email,
             Email = employeeRequest.Email
-       };
-       var result = userManager.CreateAsync(user, employeeRequest.Password).Result;
+        };
+        var result = await userManager.CreateAsync(newUser, employeeRequest.Password).ConfigureAwait(false);
 
-       if(!result.Succeeded) 
-       {
+        if(!result.Succeeded) 
+        {
            return Results.ValidationProblem(result.Errors.ConvertToProblemDetails());
-       }
+        }
 
-       var userClaims = new List<Claim>
-       {
+        var userClaims = new List<Claim>
+        {
            new Claim("EmployeeCode", employeeRequest.EmployeeCode),
-           new Claim("Name", employeeRequest.Name)
-       };
+           new Claim("Name", employeeRequest.Name),
+           new Claim("CreatedBy", userId)
+        };
 
-       var claimResult = userManager.AddClaimsAsync(user, userClaims).Result;
+        var claimResult = await userManager.AddClaimsAsync(newUser, userClaims).ConfigureAwait(false);
 
-       if(!claimResult.Succeeded)
-       {
+        if(!claimResult.Succeeded)
+        {
            return Results.ValidationProblem(result.Errors.ConvertToProblemDetails());
-       }
+        }
 
-       return Results.Created($"/employees/{user.Id}", user.Id);
+        return Results.Created($"/employees/{newUser.Id}", newUser.Id);
     }
 }

@@ -10,18 +10,20 @@ public sealed class Category : Entity
         Active = true;
         CreatedBy = createdBy;
         UpdatedBy = updatedBy;
-        CreatedAt = DateTime.Now;
-        UpdatedAt = DateTime.Now;
+        CreatedAt = DateTime.UtcNow;
+        UpdatedAt = DateTime.UtcNow;
 
         Validate();
     }
 
     public bool Active { get; set; }
 
-    public void UpdateInfo(string? name, bool active)
+    public void UpdateInfo(string? name, bool active, string updatedBy)
     {
         Name = name;
         Active = active;
+        UpdatedBy = updatedBy;
+        UpdatedAt = DateTime.UtcNow;
 
         Validate();
     }
