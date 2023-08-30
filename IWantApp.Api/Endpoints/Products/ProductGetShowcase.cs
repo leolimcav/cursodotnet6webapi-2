@@ -16,7 +16,8 @@ public sealed class ProductGetShowcase
     {
         var querybase = dbContext.Products!
                                  .Include(p => p.Category)
-                                 .Where(p => p.Category!.Active && p.HasStock);
+                                 .Where(p => p.Category!.Active && p.HasStock)
+                                 .AsNoTracking();
 
         if(orderBy.Equals("name"))
         {

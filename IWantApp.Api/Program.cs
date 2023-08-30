@@ -1,6 +1,7 @@
 using System.Text;
 
 using IWantApp.Api.Endpoints.Categories;
+using IWantApp.Api.Endpoints.Clients;
 using IWantApp.Api.Endpoints.Employees;
 using IWantApp.Api.Endpoints.Products;
 using IWantApp.Api.Endpoints.Security;
@@ -105,6 +106,8 @@ app.MapMethods(ProductPost.Template, ProductPost.Methods, ProductPost.Handle);
 app.MapMethods(ProductGetAll.Template, ProductGetAll.Methods, ProductGetAll.Handle);
 app.MapMethods(ProductGetById.Template, ProductGetById.Methods, ProductGetById.Handle);
 app.MapMethods(ProductGetShowcase.Template, ProductGetShowcase.Methods, ProductGetShowcase.Handle);
+
+app.MapMethods(ClientPost.Template, ClientPost.Methods, ClientPost.Handle);
 
 app.MapMethods(TokenPost.Template, TokenPost.Methods, TokenPost.Handle);
 
